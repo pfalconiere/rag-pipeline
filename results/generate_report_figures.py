@@ -1,4 +1,4 @@
-"""Generate all figures for the RAG pipeline evaluation report."""
+"""Generate all figures for the RAG pipeline evaluation report (v3 CoT)."""
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -25,21 +25,32 @@ df_ragas = pd.read_csv(RESULTS_DIR / "ragas_results.csv")
 df_retrieval = pd.read_csv(RESULTS_DIR / "retrieval_metrics.csv")
 fc_col = [c for c in df_ragas.columns if 'factual_correctness' in c][0]
 
+# v3 accuracy
+v3_accuracy = df_summary['correct'].mean() * 100
+
+# Load ablation if available
+try:
+    df_ablation = pd.read_csv(RESULTS_DIR / "ablation_reranker.csv")
+    has_ablation = True
+except FileNotFoundError:
+    has_ablation = False
+
 
 # ============================================================
-# Figure 1: Evolution of Accuracy across versions
+# Figure 1: Evolution of Accuracy across versions (v0-v3)
 # ============================================================
-fig, ax = plt.subplots(figsize=(8, 5))
-versions = ['v0\nClaude + parser frágil', 'v1\nGPT-4o-mini + parser robusto', 'v2\nGPT-4o-mini + few-shot\n+ temp=0']
-accuracies = [9.6, 47.0, 51.0]
-colors = ['#E74C3C', '#F39C12', '#27AE60']
+fig, ax = plt.subplots(figsize=(10, 5))
+versions = ['v0\nClaude +\nparser fragil', 'v1\nGPT-4o-mini +\nparser robusto',
+            'v2\nFew-shot +\nself-consistency', 'v3\nChain-of-Thought\n+ CoT']
+accuracies = [9.6, 47.0, 51.0, v3_accuracy]
+colors = ['#E74C3C', '#F39C12', '#3498DB', '#27AE60']
 bars = ax.bar(versions, accuracies, color=colors, edgecolor='white', width=0.6)
 for bar, val in zip(bars, accuracies):
     ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 1.2,
             f'{val:.1f}%', ha='center', va='bottom', fontsize=14, fontweight='bold')
 ax.set_ylabel('Accuracy (%)')
-ax.set_title('Evolução da Accuracy ao Longo das Otimizações')
-ax.set_ylim(0, 65)
+ax.set_title('Evolucao da Accuracy ao Longo das Otimizacoes')
+ax.set_ylim(0, 70)
 ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 plt.tight_layout()
@@ -66,7 +77,7 @@ ax.set_xticklabels(labels, fontsize=13)
 ax.set_yticklabels(labels, fontsize=13)
 ax.set_xlabel('Predicted', fontsize=13)
 ax.set_ylabel('Ground Truth', fontsize=13)
-ax.set_title('Matriz de Confusão (500 amostras)')
+ax.set_title('Matriz de Confusao (500 amostras)')
 
 for i in range(3):
     for j in range(3):
@@ -91,7 +102,7 @@ gt_counts = df_summary.ground_truth.value_counts()
 axes[0].bar(['yes', 'no', 'maybe'],
             [gt_counts.get('yes', 0), gt_counts.get('no', 0), gt_counts.get('maybe', 0)],
             color=['#27AE60', '#E74C3C', '#F39C12'], edgecolor='white')
-axes[0].set_title('Distribuição Ground Truth')
+axes[0].set_title('Distribuicao Ground Truth')
 axes[0].set_ylabel('Contagem')
 for i, v in enumerate([gt_counts.get('yes', 0), gt_counts.get('no', 0), gt_counts.get('maybe', 0)]):
     axes[0].text(i, v + 3, str(v), ha='center', fontweight='bold')
@@ -101,7 +112,7 @@ pred_counts = df_summary.predicted.value_counts()
 axes[1].bar(['yes', 'no', 'maybe'],
             [pred_counts.get('yes', 0), pred_counts.get('no', 0), pred_counts.get('maybe', 0)],
             color=['#27AE60', '#E74C3C', '#F39C12'], edgecolor='white')
-axes[1].set_title('Distribuição Predicted')
+axes[1].set_title('Distribuicao Predicted')
 axes[1].set_ylabel('Contagem')
 for i, v in enumerate([pred_counts.get('yes', 0), pred_counts.get('no', 0), pred_counts.get('maybe', 0)]):
     axes[1].text(i, v + 3, str(v), ha='center', fontweight='bold')
@@ -132,9 +143,10 @@ bars = ax.bar(class_acc.keys(), class_acc.values(),
 for bar, val in zip(bars, class_acc.values()):
     ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 1.5,
             f'{val:.1f}%', ha='center', fontweight='bold', fontsize=13)
-ax.axhline(y=51.0, color='gray', linestyle='--', alpha=0.7, label='Accuracy geral (51%)')
+ax.axhline(y=v3_accuracy, color='gray', linestyle='--', alpha=0.7,
+           label=f'Accuracy geral ({v3_accuracy:.1f}%)')
 ax.set_ylabel('Accuracy (%)')
-ax.set_title('Accuracy por Classe')
+ax.set_title('Accuracy por Classe (v3 CoT)')
 ax.set_ylim(0, 80)
 ax.legend()
 ax.spines['top'].set_visible(False)
@@ -194,11 +206,11 @@ axes[2].bar(x3 + w/2, after_vals, w, label='After Rerank', color='#DD8452')
 axes[2].set_xticks(x3)
 axes[2].set_xticklabels(key_labels, rotation=15)
 axes[2].set_ylabel('Score')
-axes[2].set_title('Métricas-chave de Retrieval')
+axes[2].set_title('Metricas-chave de Retrieval')
 axes[2].legend()
 axes[2].set_ylim(0, 1.05)
 
-plt.suptitle('Métricas de Retrieval: Before vs After Reranking', fontsize=14, y=1.02)
+plt.suptitle('Metricas de Retrieval: Before vs After Reranking', fontsize=14, y=1.02)
 plt.tight_layout()
 plt.savefig(FIGURES_DIR / "05_retrieval_metrics.png")
 plt.close()
@@ -212,21 +224,21 @@ fig, axes = plt.subplots(1, 2, figsize=(13, 5))
 
 axes[0].hist(df_ragas['faithfulness'].dropna(), bins=25, color='#4C72B0', edgecolor='white', alpha=0.85)
 axes[0].axvline(df_ragas['faithfulness'].mean(), color='red', linestyle='--', linewidth=2,
-                label=f'Média: {df_ragas["faithfulness"].mean():.3f}')
+                label=f'Media: {df_ragas["faithfulness"].mean():.3f}')
 axes[0].set_xlabel('Score')
 axes[0].set_ylabel('Contagem')
-axes[0].set_title('Distribuição de Faithfulness')
+axes[0].set_title('Distribuicao de Faithfulness (v3 CoT)')
 axes[0].legend(fontsize=11)
 
 axes[1].hist(df_ragas[fc_col].dropna(), bins=25, color='#DD8452', edgecolor='white', alpha=0.85)
 axes[1].axvline(df_ragas[fc_col].mean(), color='red', linestyle='--', linewidth=2,
-                label=f'Média: {df_ragas[fc_col].mean():.3f}')
+                label=f'Media: {df_ragas[fc_col].mean():.3f}')
 axes[1].set_xlabel('Score')
 axes[1].set_ylabel('Contagem')
-axes[1].set_title('Distribuição de Factual Correctness')
+axes[1].set_title('Distribuicao de Factual Correctness')
 axes[1].legend(fontsize=11)
 
-plt.suptitle('RAGAS Scores (500 amostras)', fontsize=14, y=1.02)
+plt.suptitle('RAGAS Scores (500 amostras, v3 CoT)', fontsize=14, y=1.02)
 plt.tight_layout()
 plt.savefig(FIGURES_DIR / "06_ragas_distributions.png")
 plt.close()
@@ -239,7 +251,7 @@ print("Figure 6: RAGAS distributions")
 fig, ax = plt.subplots(figsize=(12, 6))
 
 metrics = {
-    'Accuracy': 51.0 / 100,
+    'Accuracy': v3_accuracy / 100,
     'Factual\nCorrectness': df_ragas[fc_col].mean(),
     'Faithfulness': df_ragas['faithfulness'].mean(),
     'Hit Rate@5': df_retrieval[df_retrieval.metric == 'hit_rate@5']['after_rerank'].values[0],
@@ -255,7 +267,7 @@ for bar, val in zip(bars, metrics.values()):
             f'{val:.3f}', ha='center', va='bottom', fontsize=12, fontweight='bold')
 
 ax.set_ylabel('Score')
-ax.set_title('Painel Completo de Métricas do Pipeline RAG')
+ax.set_title('Painel Completo de Metricas do Pipeline RAG (v3 CoT)')
 ax.set_ylim(0, 1.1)
 ax.axhline(y=0.5, color='gray', linestyle=':', alpha=0.5)
 ax.spines['top'].set_visible(False)
@@ -267,41 +279,66 @@ print("Figure 7: metrics dashboard")
 
 
 # ============================================================
-# Figure 8: Factual Correctness Evolution (v0 vs v1 vs v2)
+# Figure 8: Factual Correctness + Faithfulness Evolution (v0-v3)
 # ============================================================
-fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
 # Factual Correctness
-versions = ['v0\n(Claude)', 'v1\n(GPT-4o-mini)', 'v2\n(Otimizado)']
-fc_vals = [0.022, 0.470, 0.510]
-colors_fc = ['#E74C3C', '#F39C12', '#27AE60']
-bars = axes[0].bar(versions, fc_vals, color=colors_fc, edgecolor='white', width=0.5)
+versions_short = ['v0\n(Claude)', 'v1\n(GPT-4o-mini)', 'v2\n(Few-shot)', 'v3\n(CoT)']
+fc_vals = [0.022, 0.470, 0.510, df_ragas[fc_col].mean()]
+colors_fc = ['#E74C3C', '#F39C12', '#3498DB', '#27AE60']
+bars = axes[0].bar(versions_short, fc_vals, color=colors_fc, edgecolor='white', width=0.5)
 for bar, val in zip(bars, fc_vals):
     axes[0].text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.015,
-                 f'{val:.3f}', ha='center', fontweight='bold', fontsize=13)
+                 f'{val:.3f}', ha='center', fontweight='bold', fontsize=12)
 axes[0].set_ylabel('Score')
 axes[0].set_title('Factual Correctness (F1)')
-axes[0].set_ylim(0, 0.7)
+axes[0].set_ylim(0, 0.8)
 axes[0].spines['top'].set_visible(False)
 axes[0].spines['right'].set_visible(False)
 
 # Faithfulness
-faith_vals = [0.770, 0.380, 0.347]
-bars2 = axes[1].bar(versions, faith_vals, color=colors_fc, edgecolor='white', width=0.5)
+faith_vals = [0.770, 0.380, 0.347, df_ragas['faithfulness'].mean()]
+bars2 = axes[1].bar(versions_short, faith_vals, color=colors_fc, edgecolor='white', width=0.5)
 for bar, val in zip(bars2, faith_vals):
     axes[1].text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.015,
-                 f'{val:.3f}', ha='center', fontweight='bold', fontsize=13)
+                 f'{val:.3f}', ha='center', fontweight='bold', fontsize=12)
 axes[1].set_ylabel('Score')
 axes[1].set_title('Faithfulness')
 axes[1].set_ylim(0, 1.0)
 axes[1].spines['top'].set_visible(False)
 axes[1].spines['right'].set_visible(False)
 
-plt.suptitle('Evolução das Métricas RAGAS', fontsize=14, y=1.02)
+plt.suptitle('Evolucao das Metricas RAGAS', fontsize=14, y=1.02)
 plt.tight_layout()
 plt.savefig(FIGURES_DIR / "08_ragas_evolution.png")
 plt.close()
 print("Figure 8: RAGAS evolution")
+
+
+# ============================================================
+# Figure 9: Ablation Study - Reranker Impact
+# ============================================================
+if has_ablation:
+    fig, ax = plt.subplots(figsize=(8, 5))
+    configs = df_ablation['configuration'].tolist()
+    accs = (df_ablation['accuracy'] * 100).tolist()
+    colors_abl = ['#27AE60', '#E74C3C']
+    bars = ax.bar(configs, accs, color=colors_abl, edgecolor='white', width=0.5)
+    for bar, val in zip(bars, accs):
+        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.8,
+                f'{val:.1f}%', ha='center', fontweight='bold', fontsize=14)
+    ax.set_ylabel('Accuracy (%)')
+    ax.set_title('Ablation Study: Impacto do Reranker na Accuracy')
+    ax.set_ylim(0, max(accs) + 15)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    plt.tight_layout()
+    plt.savefig(FIGURES_DIR / "09_ablation_reranker.png")
+    plt.close()
+    print("Figure 9: ablation reranker")
+else:
+    print("Figure 9: SKIPPED (no ablation data)")
 
 
 print(f"\nAll figures saved to {FIGURES_DIR}/")
