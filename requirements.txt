@@ -1,0 +1,35 @@
+# LlamaIndex core + integrations
+llama-index-core
+llama-index-llms-anthropic
+llama-index-llms-openai
+llama-index-embeddings-huggingface
+llama-index-vector-stores-chroma
+
+# Vector store
+chromadb
+
+# Embeddings & reranking
+sentence-transformers
+
+# Dataset
+datasets
+
+# Evaluation (RAGAS + LangChain wrapper)
+ragas>=0.2.0
+langchain-anthropic
+langchain-openai
+langchain-huggingface
+
+# OpenAI
+openai
+
+# Data & visualization
+pandas
+matplotlib
+
+# Environment
+python-dotenv
+
+# Jupyter
+jupyter
+ipywidgets
