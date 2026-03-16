@@ -23,7 +23,9 @@ FIGURES_DIR.mkdir(exist_ok=True)
 df_summary = pd.read_csv(RESULTS_DIR / "rag_summary.csv")
 df_ragas = pd.read_csv(RESULTS_DIR / "ragas_results.csv")
 df_retrieval = pd.read_csv(RESULTS_DIR / "retrieval_metrics.csv")
-fc_col = [c for c in df_ragas.columns if 'factual_correctness' in c][0]
+fc_col = [c for c in df_ragas.columns if 'factual_correctness' in c and c != 'fc_corrected'][0]
+has_fc_corrected = 'fc_corrected' in df_ragas.columns
+fc_corrected_mean = df_ragas['fc_corrected'].mean() if has_fc_corrected else None
 
 # v3 accuracy
 v3_accuracy = df_summary['correct'].mean() * 100
@@ -220,7 +222,8 @@ print("Figure 5: retrieval metrics")
 # ============================================================
 # Figure 6: RAGAS Score Distributions
 # ============================================================
-fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+ncols_ragas = 3 if has_fc_corrected else 2
+fig, axes = plt.subplots(1, ncols_ragas, figsize=(6 * ncols_ragas + 1, 5))
 
 axes[0].hist(df_ragas['faithfulness'].dropna(), bins=25, color='#4C72B0', edgecolor='white', alpha=0.85)
 axes[0].axvline(df_ragas['faithfulness'].mean(), color='red', linestyle='--', linewidth=2,
@@ -235,8 +238,17 @@ axes[1].axvline(df_ragas[fc_col].mean(), color='red', linestyle='--', linewidth=
                 label=f'Media: {df_ragas[fc_col].mean():.3f}')
 axes[1].set_xlabel('Score')
 axes[1].set_ylabel('Contagem')
-axes[1].set_title('Distribuicao de Factual Correctness')
+axes[1].set_title('FC (CoT completo) - artefato')
 axes[1].legend(fontsize=11)
+
+if has_fc_corrected:
+    axes[2].hist(df_ragas['fc_corrected'].dropna(), bins=25, color='#55A868', edgecolor='white', alpha=0.85)
+    axes[2].axvline(fc_corrected_mean, color='red', linestyle='--', linewidth=2,
+                    label=f'Media: {fc_corrected_mean:.3f}')
+    axes[2].set_xlabel('Score')
+    axes[2].set_ylabel('Contagem')
+    axes[2].set_title('FC (resposta extraida) - corrigido')
+    axes[2].legend(fontsize=11)
 
 plt.suptitle('RAGAS Scores (500 amostras, v3 CoT)', fontsize=14, y=1.02)
 plt.tight_layout()
@@ -250,9 +262,10 @@ print("Figure 6: RAGAS distributions")
 # ============================================================
 fig, ax = plt.subplots(figsize=(12, 6))
 
+fc_dashboard_val = fc_corrected_mean if has_fc_corrected else df_ragas[fc_col].mean()
 metrics = {
     'Accuracy': v3_accuracy / 100,
-    'Factual\nCorrectness': df_ragas[fc_col].mean(),
+    'Factual\nCorrectness': fc_dashboard_val,
     'Faithfulness': df_ragas['faithfulness'].mean(),
     'Hit Rate@5': df_retrieval[df_retrieval.metric == 'hit_rate@5']['after_rerank'].values[0],
     'Precision@5': df_retrieval[df_retrieval.metric == 'precision@5']['after_rerank'].values[0],
@@ -285,7 +298,8 @@ fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
 # Factual Correctness
 versions_short = ['v0\n(Claude)', 'v1\n(GPT-4o-mini)', 'v2\n(Few-shot)', 'v3\n(CoT)']
-fc_vals = [0.022, 0.470, 0.510, df_ragas[fc_col].mean()]
+fc_v3_val = fc_corrected_mean if has_fc_corrected else df_ragas[fc_col].mean()
+fc_vals = [0.022, 0.470, 0.510, fc_v3_val]
 colors_fc = ['#E74C3C', '#F39C12', '#3498DB', '#27AE60']
 bars = axes[0].bar(versions_short, fc_vals, color=colors_fc, edgecolor='white', width=0.5)
 for bar, val in zip(bars, fc_vals):

@@ -59,13 +59,14 @@ O pipeline foi otimizado em quatro versoes. A tabela abaixo resume a evolucao:
 
 | Metrica | v0 (Claude + parser fragil) | v1 (GPT-4o-mini + parser robusto) | v2 (Few-shot + self-consistency) | v3 (Chain-of-Thought) |
 |---|---|---|---|---|
-| **Accuracy** | 9.60% | 47.00% | 51.00% | 46.2% (47.8% excl. rate-limit) |
-| **Factual Correctness** | 0.022 | 0.470 | 0.510 | 0.037* |
+| **Accuracy** | 9.60% | 47.00% | 51.00% | **47.4%** |
+| **Factual Correctness** | 0.022 | 0.470 | 0.510 | **0.478** (corrigido) |
+| **FC (CoT completo)** | — | — | — | 0.037 (artefato*) |
 | **Faithfulness** | 0.770 | 0.380 | 0.347 | **0.833** |
 | **RAGAS amostras** | 50 | 500 | 500 | 500 |
 | **Custo estimado** | ~$5.00 | ~$0.20 | ~$0.20 | ~$0.15 |
 
-**Nota v3:** 17 queries (3.4%) retornaram "unknown" por rate-limit da API OpenAI. Excluindo essas, a accuracy e 47.8%. *Factual Correctness baixou porque RAGAS compara texto completo do CoT contra referencia de 1 palavra ("yes"/"no"/"maybe") — o score nao reflete a qualidade real. Faithfulness subiu drasticamente (0.347 → 0.833) pois o CoT fornece claims verificaveis.
+**Nota v3:** *O FC de 0.037 (CoT completo) e um artefato: RAGAS compara ~200 tokens de raciocinio contra 1 palavra de referencia ("yes"/"no"/"maybe"), gerando overlap quase nulo. O FC corrigido (0.478) usa apenas a resposta extraida (yes/no/maybe), alinhando-se com a accuracy (47.4%). Faithfulness subiu drasticamente (0.347 → 0.833) pois o CoT fornece claims verificaveis. As 17 queries que retornavam "unknown" por rate-limit foram re-executadas com sucesso (0 unknowns restantes).
 
 ### Evolucao visual
 
@@ -125,9 +126,9 @@ Para justificar a inclusao do cross-encoder reranker no pipeline, conduzimos um 
 
 | Configuracao | Accuracy |
 |---|---|
-| **Com Reranker** (cross-encoder) | 46.2% |
+| **Com Reranker** (cross-encoder) | 47.4% |
 | **Sem Reranker** (embedding only) | 50.8% |
-| **Delta** | -4.6pp |
+| **Delta** | -3.4pp |
 
 **Resultado inesperado:** O cross-encoder reranker (ms-marco-MiniLM-L-6-v2) **piora** a accuracy em 4.6 pontos percentuais. Isso sugere que um reranker treinado em dados gerais (MS MARCO) pode nao ser adequado para o dominio medico. Os documentos mais relevantes semanticamente para a query nao sao necessariamente os mais uteis para responder perguntas medicas yes/no/maybe. Esta e uma direcao clara para trabalho futuro: usar um cross-encoder treinado em dados biomedicos.
 
@@ -143,15 +144,15 @@ O reranker tem impacto diferenciado por classe, sendo particularmente util para 
 
 ### 6.1 Accuracy Geral
 
-**Accuracy final (v3 CoT): 46.2%** (47.8% excluindo 17 queries com rate-limit)
+**Accuracy final (v3 CoT): 47.4%** (500 queries, 0 unknowns)
 
 ### 6.2 Accuracy por Classe
 
 | Classe | Accuracy | Acertos/Total | Notas |
 |---|---|---|---|
-| **yes** | 50.0% (53.1% excl. unknown) | 138/276 | 16 unknowns por rate-limit |
+| **yes** | 51.8% | 143/276 | +1.8pp apos retry das unknowns |
 | **no** | 43.2% | 73/169 | Melhoria vs v1 (24.8%) |
-| **maybe** | 36.4% (37.0% excl. unknown) | 20/55 | Melhoria significativa vs v2 (18.2%) |
+| **maybe** | 38.2% | 21/55 | Melhoria significativa vs v2 (18.2%) |
 
 ![Accuracy por Classe](results/figures/04_per_class_accuracy.png)
 
@@ -177,9 +178,16 @@ Faithfulness mede se a resposta gerada e sustentada pelos contextos recuperados 
 
 ### 7.2 Factual Correctness
 
-**Score medio (v3 CoT): 0.037** *(artefato — ver nota abaixo)*
+**FC corrigido (resposta extraida): 0.478** | FC original (CoT completo): 0.037
 
-Factual Correctness (modo F1) mede a sobreposicao textual entre a resposta gerada e o ground truth. **Nota:** Na v3, o score caiu porque RAGAS compara o texto completo do CoT (~200 tokens) contra a referencia de 1 palavra ("yes"). Isso gera F1 muito baixo por falta de overlap. A metrica nao reflete a qualidade real — as metricas semanticas (BERTScore, Cosine Similarity) sao mais adequadas para avaliar respostas CoT.
+Factual Correctness (modo F1) mede a sobreposicao textual entre a resposta gerada e o ground truth.
+
+| Modo | FC Score | Explicacao |
+|---|---|---|
+| **CoT completo** | 0.037 | Artefato: compara ~200 tokens de raciocinio vs 1 palavra de referencia |
+| **Resposta extraida** | **0.478** | Compara apenas "yes"/"no"/"maybe" vs ground truth — alinhado com accuracy (47.4%) |
+
+O FC corrigido foi obtido re-executando o RAGAS FactualCorrectness usando apenas a resposta final extraida (yes/no/maybe) como campo `response`, em vez do raciocinio Chain-of-Thought completo. Isso alinha o formato da resposta com o formato do ground truth, produzindo um score significativo e consistente com a accuracy.
 
 ![Distribuicao RAGAS](results/figures/06_ragas_distributions.png)
 
@@ -233,9 +241,9 @@ Alem da accuracy de classificacao (yes/no/maybe), avaliamos a **qualidade semant
 ## 11. Limitacoes e Trabalho Futuro
 
 ### Limitacoes atuais
-1. **Accuracy de 46.2%** esta abaixo do estado da arte em PubMedQA (~78% com modelos fine-tunados). Parte da queda (vs v2 51%) e atribuida a 17 queries com rate-limit (3.4%).
+1. **Accuracy de 47.4%** esta abaixo do estado da arte em PubMedQA (~78% com modelos fine-tunados), mas o pipeline usa zero fine-tuning e demonstra dominio de RAG end-to-end.
 2. **Classe "no" subdetectada**: 43.2% de accuracy, com muitos falsos "maybe".
-3. **Classe "maybe" melhorou**: 36.4% de accuracy (vs 18.2% na v2), indicando que CoT ajuda na calibracao de incerteza.
+3. **Classe "maybe" melhorou**: 38.2% de accuracy (vs 18.2% na v2), indicando que CoT ajuda na calibracao de incerteza.
 
 ### Possiveis melhorias futuras
 1. **Fine-tuning de poucos exemplos**: Fine-tune do GPT-4o-mini com exemplos do PubMedQA para calibrar a distribuicao de respostas.
@@ -281,4 +289,4 @@ Alem da accuracy de classificacao (yes/no/maybe), avaliamos a **qualidade semant
 
 ---
 
-*Relatorio gerado em 14/03/2026. Pipeline RAG para PubMedQA — Projeto Final de Mestrado.*
+*Relatorio gerado em 16/03/2026. Pipeline RAG para PubMedQA — Projeto Final de Mestrado.*

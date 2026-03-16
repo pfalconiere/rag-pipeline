@@ -42,7 +42,7 @@ pubmed_40,Is the combination with 2-methoxyestradiol able to reduce the dosages 
 pubmed_41,Does a dedicated discharge coordinator improve the quality of hospital discharge?,yes,no,False,['no'],5
 pubmed_42,Impact of MPH programs: contributing to health system strengthening in low- and middle-income countries?,yes,yes,True,['yes'],5
 pubmed_43,Pap smears with glandular cell abnormalities: Are they detected by rapid prescreening?,yes,yes,True,['yes'],5
-pubmed_44,Can transcranial direct current stimulation be useful in differentiating unresponsive wakefulness syndrome from minimally conscious state patients?,yes,unknown,False,['unknown'],5
+pubmed_44,Can transcranial direct current stimulation be useful in differentiating unresponsive wakefulness syndrome from minimally conscious state patients?,yes,no,False,['no'],5
 pubmed_45,Is etoricoxib effective in preventing heterotopic ossification after primary total hip arthroplasty?,yes,yes,True,['yes'],5
 pubmed_46,Assessing Patient Reported Outcomes Measures via Phone Interviews Versus Patient Self-Survey in the Clinic: Are We Measuring the Same Thing?,yes,maybe,False,['maybe'],5
 pubmed_47,Can emergency physicians accurately and reliably assess acute vertigo in the emergency department?,yes,yes,True,['yes'],5
@@ -137,13 +137,13 @@ pubmed_135,Patient-Controlled Therapy of Breathlessness in Palliative Care: A Ne
 pubmed_136,Is pain a clinically relevant problem in general adult psychiatry?,yes,yes,True,['yes'],5
 pubmed_137,Should displaced midshaft clavicular fractures be treated surgically?,yes,yes,True,['yes'],5
 pubmed_138,Telemedicine and type 1 diabetes: is technology per se sufficient to improve glycaemic control?,yes,no,False,['no'],5
-pubmed_139,Do European people with type 1 diabetes consume a high atherogenic diet?,yes,unknown,False,['unknown'],5
+pubmed_139,Do European people with type 1 diabetes consume a high atherogenic diet?,yes,yes,True,['yes'],5
 pubmed_140,Preoperative platelet count in esophageal squamous cell carcinoma: is it a prognostic factor?,yes,yes,True,['yes'],5
 pubmed_141,Should serum pancreatic lipase replace serum amylase as a biomarker of acute pancreatitis?,yes,yes,True,['yes'],5
 pubmed_142,Do Electrochemiluminescence Assays Improve Prediction of Time to Type 1 Diabetes in Autoantibody-Positive TrialNet Subjects?,yes,yes,True,['yes'],5
 pubmed_143,Does SYNTAX score predict in-hospital outcomes in patients with ST elevation myocardial infarction undergoing primary percutaneous coronary intervention?,yes,no,False,['no'],5
 pubmed_144,Are behavioural risk factors to be blamed for the conversion from optimal blood pressure to hypertensive status in Black South Africans?,yes,yes,True,['yes'],5
-pubmed_145,Does the type of tibial component affect mechanical alignment in unicompartmental knee replacement?,yes,unknown,False,['unknown'],5
+pubmed_145,Does the type of tibial component affect mechanical alignment in unicompartmental knee replacement?,yes,yes,True,['yes'],5
 pubmed_146,Upstream solutions: does the supplemental security income program reduce disability in the elderly?,yes,maybe,False,['maybe'],5
 pubmed_147,Can serum be used for analyzing the EGFR mutation status in patients with advanced non-small cell lung cancer?,yes,yes,True,['yes'],5
 pubmed_148,Are failures of anterior cruciate ligament reconstruction associated with steep posterior tibial slopes?,yes,no,False,['no'],5
@@ -189,7 +189,7 @@ pubmed_187,Do nomograms designed to predict biochemical recurrence (BCR) do a be
 pubmed_188,"Do ""America's Best Hospitals"" perform better for acute myocardial infarction?",yes,no,False,['no'],5
 pubmed_189,Do socioeconomic differences in mortality persist after retirement?,yes,yes,True,['yes'],5
 pubmed_190,Convulsions and retinal haemorrhage: should we look further?,yes,maybe,False,['maybe'],5
-pubmed_191,Is the use of cyanoacrylate in intestinal anastomosis a good and reliable alternative?,yes,unknown,False,['unknown'],5
+pubmed_191,Is the use of cyanoacrylate in intestinal anastomosis a good and reliable alternative?,yes,maybe,False,['maybe'],5
 pubmed_192,Are increased carotid artery pulsatility and resistance indexes early signs of vascular abnormalities in young obese males?,yes,yes,True,['yes'],5
 pubmed_193,Does topical ropivacaine reduce the post-tonsillectomy morbidity in pediatric patients?,yes,maybe,False,['maybe'],5
 pubmed_194,Is robotically assisted laparoscopic radical prostatectomy less invasive than retropubic radical prostatectomy?,yes,maybe,False,['maybe'],5
@@ -228,20 +228,20 @@ pubmed_226,Does head positioning influence anterior chamber depth in pseudoexfol
 pubmed_227,Are intraoperative precursor events associated with postoperative major adverse events?,yes,yes,True,['yes'],5
 pubmed_228,Transient tachypnea of the newborn (TTN): a role for polymorphisms in the beta-adrenergic receptor (ADRB) encoding genes?,yes,no,False,['no'],5
 pubmed_229,Could ADMA levels in young adults born preterm predict an early endothelial dysfunction?,yes,maybe,False,['maybe'],5
-pubmed_230,Informed consent for total hip arthroplasty: does a written information sheet improve recall by patients?,yes,unknown,False,['unknown'],5
+pubmed_230,Informed consent for total hip arthroplasty: does a written information sheet improve recall by patients?,yes,maybe,False,['maybe'],5
 pubmed_231,Quaternary cytoreductive surgery in ovarian cancer: does surgical effort still matter?,yes,maybe,False,['maybe'],5
-pubmed_232,Can a Novel Surgical Approach to the Temporomandibular Joint Improve Access and Reduce Complications?,yes,unknown,False,['unknown'],5
-pubmed_233,Hepatic arterial embolization for unresectable hepatocellular carcinomas: do technical factors affect prognosis?,yes,unknown,False,['unknown'],5
-pubmed_234,Is plate clearing a risk factor for obesity?,yes,unknown,False,['unknown'],5
-pubmed_235,Outcomes of severely injured adult trauma patients in an Australian health service: does trauma center level make a difference?,yes,unknown,False,['unknown'],5
-pubmed_236,Does the lipid-lowering peroxisome proliferator-activated receptors ligand bezafibrate prevent colon cancer in patients with coronary artery disease?,yes,unknown,False,['unknown'],5
-pubmed_237,Serum angiotensin-converting enzyme and frequency of severe hypoglycaemia in Type 1 diabetes: does a relationship exist?,yes,unknown,False,['unknown'],5
-pubmed_238,Hypotension in patients with coronary disease: can profound hypotensive events cause myocardial ischaemic events?,yes,unknown,False,['unknown'],5
-pubmed_239,Measuring hospital mortality rates: are 30-day data enough?,yes,unknown,False,['unknown'],5
-pubmed_240,Is the ability to perform transurethral resection of the prostate influenced by the surgeon's previous experience?,yes,unknown,False,['unknown'],5
-pubmed_241,"Syncope during bathing in infants, a pediatric form of water-induced urticaria?",yes,unknown,False,['unknown'],5
+pubmed_232,Can a Novel Surgical Approach to the Temporomandibular Joint Improve Access and Reduce Complications?,yes,maybe,False,['maybe'],5
+pubmed_233,Hepatic arterial embolization for unresectable hepatocellular carcinomas: do technical factors affect prognosis?,yes,maybe,False,['maybe'],5
+pubmed_234,Is plate clearing a risk factor for obesity?,yes,maybe,False,['maybe'],5
+pubmed_235,Outcomes of severely injured adult trauma patients in an Australian health service: does trauma center level make a difference?,yes,maybe,False,['maybe'],5
+pubmed_236,Does the lipid-lowering peroxisome proliferator-activated receptors ligand bezafibrate prevent colon cancer in patients with coronary artery disease?,yes,no,False,['no'],5
+pubmed_237,Serum angiotensin-converting enzyme and frequency of severe hypoglycaemia in Type 1 diabetes: does a relationship exist?,yes,maybe,False,['maybe'],5
+pubmed_238,Hypotension in patients with coronary disease: can profound hypotensive events cause myocardial ischaemic events?,yes,yes,True,['yes'],5
+pubmed_239,Measuring hospital mortality rates: are 30-day data enough?,yes,maybe,False,['maybe'],5
+pubmed_240,Is the ability to perform transurethral resection of the prostate influenced by the surgeon's previous experience?,yes,yes,True,['yes'],5
+pubmed_241,"Syncope during bathing in infants, a pediatric form of water-induced urticaria?",yes,maybe,False,['maybe'],5
 pubmed_242,Do women residents delay childbearing due to perceived career threats?,yes,yes,True,['yes'],5
-pubmed_243,Is trabecular bone related to primary stability of miniscrews?,yes,unknown,False,['unknown'],5
+pubmed_243,Is trabecular bone related to primary stability of miniscrews?,yes,yes,True,['yes'],5
 pubmed_244,Acute respiratory distress syndrome in children with malignancy--can we predict outcome?,yes,yes,True,['yes'],5
 pubmed_245,"Neoadjuvant Imatinib in Locally Advanced Gastrointestinal stromal Tumours, Will Kit Mutation Analysis Be a Pathfinder?",yes,yes,True,['yes'],5
 pubmed_246,Is obesity a risk factor for wheezing among adolescents?,yes,yes,True,['yes'],5
@@ -444,7 +444,7 @@ pubmed_442,Does the treatment of amblyopia normalise subfoveal choroidal thickne
 pubmed_443,Should tumor depth be included in prognostication of soft tissue sarcoma?,no,no,True,['no'],5
 pubmed_444,Does performance in selection processes predict performance as a dental student?,no,no,True,['no'],5
 pubmed_445,"Antiretroviral therapy related adverse effects: Can sub-Saharan Africa cope with the new ""test and treat"" policy of the World Health Organization?",no,no,True,['no'],5
-pubmed_446,"Expression of c-kit protooncogen in hepatitis B virus-induced chronic hepatitis, cirrhosis and hepatocellular carcinoma: has it a diagnostic role?",maybe,unknown,False,['unknown'],5
+pubmed_446,"Expression of c-kit protooncogen in hepatitis B virus-induced chronic hepatitis, cirrhosis and hepatocellular carcinoma: has it a diagnostic role?",maybe,maybe,True,['maybe'],5
 pubmed_447,Can calprotectin predict relapse risk in inflammatory bowel disease?,maybe,yes,False,['yes'],5
 pubmed_448,Does shaving the incision site increase the infection rate after spinal surgery?,maybe,maybe,True,['maybe'],5
 pubmed_449,Antral follicle assessment as a tool for predicting outcome in IVF--is it a better predictor than age and FSH?,maybe,maybe,True,['maybe'],5

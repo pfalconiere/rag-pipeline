@@ -1,0 +1,51 @@
+id,query,ground_truth,generated_answer,num_docs,correct
+pubmed_1,Is anorectal endosonography valuable in dyschesia?,yes,yes,5,True
+pubmed_2,Is there a connection between sublingual varices and hypertension?,yes,yes,5,True
+pubmed_3,Is the affinity column-mediated immunoassay method suitable as an alternative to the microparticle enzyme immunoassay method as a blood tacrolimus assay?,yes,maybe,5,False
+pubmed_4,Does a physician's specialty influence the recording of medication history in patients' case notes?,yes,yes,5,True
+pubmed_5,Locoregional opening of the rodent blood-brain barrier for paclitaxel using Nd:YAG laser-induced thermo therapy: a new concept of adjuvant glioma therapy?,yes,yes,5,True
+pubmed_6,Spinal subdural hematoma: a sequela of a ruptured intracranial aneurysm?,yes,yes,5,True
+pubmed_7,Is there a correlation between androgens and sexual desire in women?,yes,maybe,5,False
+pubmed_8,Is the zeolite hemostatic agent beneficial in reducing blood loss during arterial injury?,yes,maybe,5,False
+pubmed_9,Are endothelial cell patterns of astrocytomas indicative of grade?,yes,yes,5,True
+pubmed_10,Should cavitation in proximal surfaces be reported in cone beam computed tomography examination?,yes,yes,5,True
+pubmed_11,Ultrasound in squamous cell carcinoma of the penis; a useful addition to clinical staging?,yes,maybe,5,False
+pubmed_12,Can third trimester ultrasound predict the presentation of the first twin at delivery?,yes,yes,5,True
+pubmed_13,Is micro-computed tomography reliable to determine the microstructure of the maxillary alveolar bone?,yes,maybe,5,False
+pubmed_14,Is primary angioplasty an acceptable alternative to thrombolysis?,yes,yes,5,True
+pubmed_15,Is endometrial polyp formation associated with increased expression of vascular endothelial growth factor and transforming growth factor-beta1?,yes,yes,5,True
+pubmed_16,Improvements in survival of gynaecological cancer in the Anglia region of England: are these an effect of centralisation of care and use of multidisciplinary management?,yes,yes,5,True
+pubmed_17,Estimated fetal weight by ultrasound: a modifiable risk factor for cesarean delivery?,yes,maybe,5,False
+pubmed_18,Are financial incentives cost-effective to support smoking cessation during pregnancy?,yes,maybe,5,False
+pubmed_19,Do adjuvant aromatase inhibitors increase the cardiovascular risk in postmenopausal women with early breast cancer?,yes,yes,5,True
+pubmed_20,Is fear of anaphylactic shock discouraging surgeons from more widely adopting percutaneous and laparoscopic techniques in the treatment of liver hydatid cyst?,yes,yes,5,True
+pubmed_21,Risk stratification in emergency surgical patients: is the APACHE II score a reliable marker of physiological impairment?,yes,maybe,5,False
+pubmed_22,Can Flexible Instruments Create Adequate Femoral Tunnel Lengths at 90° of Knee Flexion in Anterior Cruciate Ligament Reconstruction?,yes,yes,5,True
+pubmed_23,Do mitochondria play a role in remodelling lace plant leaves during programmed cell death?,yes,maybe,5,False
+pubmed_24,"""Occult"" posttraumatic lesions of the knee: can magnetic resonance substitute for diagnostic arthroscopy?",yes,no,5,False
+pubmed_25,Does Sensation Return to the Nasal Tip After Microfat Grafting?,yes,yes,5,True
+pubmed_26,Do some U.S. states have higher/lower injury mortality rates than others?,yes,yes,5,True
+pubmed_27,Hepatorenal syndrome: are we missing some prognostic factors?,yes,no,5,False
+pubmed_28,"The Main Gate Syndrome: a new format in mass-casualty victim ""surge"" management?",yes,no,5,False
+pubmed_29,Is EQ-5D a valid quality of life instrument in patients with acute coronary syndrome?,yes,yes,5,True
+pubmed_30,Is portable ultrasonography accurate in the evaluation of Schanz pin placement during extremity fracture fixation in austere environments?,yes,no,5,False
+pubmed_31,Is grandmultiparity an independent risk factor for adverse perinatal outcomes?,yes,yes,5,True
+pubmed_32,Does depression diagnosis and antidepressant prescribing vary by location?,yes,yes,5,True
+pubmed_33,Learning needs of postpartum women: does socioeconomic status matter?,yes,yes,5,True
+pubmed_34,Is there a differential in the dental health of new recruits to the British Armed Forces?,yes,yes,5,True
+pubmed_35,Do patients with rheumatoid arthritis established on methotrexate and folic acid 5 mg daily need to continue folic acid supplements long term?,yes,maybe,5,False
+pubmed_36,Can teaching medical students to investigate medication errors change their attitudes towards patient safety?,yes,yes,5,True
+pubmed_37,Does a delay in transfer to a rehabilitation unit for older people affect outcome after fracture of the proximal femur?,yes,yes,5,True
+pubmed_38,Are there gender differences in the reasons why African Americans delay in seeking medical help for symptoms of an acute myocardial infarction?,yes,maybe,5,False
+pubmed_39,Does ambulatory process of care predict health-related quality of life outcomes for patients with chronic disease?,yes,maybe,5,False
+pubmed_40,Is the combination with 2-methoxyestradiol able to reduce the dosages of chemotherapeutices in the treatment of human ovarian cancer?,yes,maybe,5,False
+pubmed_41,Does a dedicated discharge coordinator improve the quality of hospital discharge?,yes,maybe,5,False
+pubmed_42,Impact of MPH programs: contributing to health system strengthening in low- and middle-income countries?,yes,maybe,5,False
+pubmed_43,Pap smears with glandular cell abnormalities: Are they detected by rapid prescreening?,yes,yes,5,True
+pubmed_44,Can transcranial direct current stimulation be useful in differentiating unresponsive wakefulness syndrome from minimally conscious state patients?,yes,no,5,False
+pubmed_45,Is etoricoxib effective in preventing heterotopic ossification after primary total hip arthroplasty?,yes,maybe,5,False
+pubmed_46,Assessing Patient Reported Outcomes Measures via Phone Interviews Versus Patient Self-Survey in the Clinic: Are We Measuring the Same Thing?,yes,maybe,5,False
+pubmed_47,Can emergency physicians accurately and reliably assess acute vertigo in the emergency department?,yes,yes,5,True
+pubmed_48,Proof of concept study: does fenofibrate have a role in sleep apnoea syndrome?,yes,maybe,5,False
+pubmed_49,Does implant coating with antibacterial-loaded hydrogel reduce bacterial colonization and biofilm formation in vitro?,yes,yes,5,True
+pubmed_50,Does bone anchor fixation improve the outcome of percutaneous bladder neck suspension in female stress urinary incontinence?,yes,yes,5,True

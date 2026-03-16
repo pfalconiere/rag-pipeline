@@ -123,7 +123,7 @@ echo "OPENAI_API_KEY=sk-..." > .env
 
 **Como saber se ta certo:**
 - O notebook imprime a accuracy ao final
-- Verificar que nao ha muitos "unknown" (< 2%)
+- Verificar que nao ha "unknown" (0% apos retry)
 - O campo `raw_response` deve conter raciocinio (nao apenas "yes")
 
 **Tempo estimado:** ~30-40 min (retrieval local + 500 chamadas API)
@@ -213,15 +213,15 @@ Compara accuracy COM reranker vs SEM reranker para justificar a inclusao do cros
 - `results/ragas_results.csv` — Scores RAGAS por query
 - `results/ablation_reranker.csv` — Comparacao com/sem reranker
 - `results/semantic_evaluation.csv` — BERTScore, ROUGE-L, Cosine Sim por query
-- Faithfulness esperada: ~0.6-0.8 (melhoria significativa vs v2)
-- Factual Correctness esperada: ~0.5 (consistente com accuracy)
+- Faithfulness: 0.833 (melhoria significativa vs v2)
+- Factual Correctness corrigido: 0.478 (consistente com accuracy 47.4%)
 - BERTScore F1 esperado: ~0.85+ (alta similaridade semantica)
 - Cosine Similarity esperado: ~0.70+ (bom alinhamento com golden docs)
 
 **Como saber se ta certo:**
 - Faithfulness > 0.5 (melhoria vs v2 que era 0.35)
-- Factual Correctness ~ accuracy (ambos medem "acertou?")
-- Ablation mostra diferenca positiva do reranker
+- Factual Correctness corrigido ~ accuracy (ambos medem "acertou?")
+- Ablation mostra impacto do reranker (-3.4pp)
 - BERTScore > 0.80 (raciocinio semanticamente coerente)
 - Scores semanticos similares entre predicoes corretas e incorretas (valida que o modelo entende a evidencia)
 
@@ -237,7 +237,7 @@ Compara accuracy COM reranker vs SEM reranker para justificar a inclusao do cros
 python results/generate_report_figures.py
 ```
 
-Gera 9 figuras em `results/figures/` a partir dos CSVs de resultados.
+Gera 10 figuras em `results/figures/` a partir dos CSVs de resultados.
 
 ---
 
@@ -276,7 +276,7 @@ mestrado-cesar-13-marco-projeto-final/
 |   |-- langchain_results.csv     # Resultados LangChain (50 queries)
 |   |-- semantic_evaluation.csv  # BERTScore, ROUGE-L, Cosine Sim por query
 |   |-- generate_report_figures.py # Script para gerar graficos
-|   |-- figures/                  # 9 graficos PNG
+|   |-- figures/                  # 10 graficos PNG
 |       |-- 01_accuracy_evolution.png
 |       |-- 02_confusion_matrix.png
 |       |-- 03_distribution_comparison.png
@@ -296,14 +296,12 @@ mestrado-cesar-13-marco-projeto-final/
 
 ## Evolucao do Pipeline (4 versoes)
 
-| Versao | Mudancas | Accuracy | Faithfulness |
-|---|---|---|---|
-| **v0** | Claude Sonnet + parser fragil | 9.6% | 0.770 |
-| **v1** | GPT-4o-mini + parser robusto | 47.0% | 0.380 |
-| **v2** | Few-shot + temp=0 | 51.0% | 0.347 |
-| **v3** | Chain-of-Thought + CoT reasoning | ~50% | ~0.65-0.80* |
-
-*\*v3 em execucao*
+| Versao | Mudancas | Accuracy | Faithfulness | FC (corrigido) |
+|---|---|---|---|---|
+| **v0** | Claude Sonnet + parser fragil | 9.6% | 0.770 | 0.022 |
+| **v1** | GPT-4o-mini + parser robusto | 47.0% | 0.380 | 0.470 |
+| **v2** | Few-shot + temp=0 | 51.0% | 0.347 | 0.510 |
+| **v3** | Chain-of-Thought + CoT reasoning | **47.4%** | **0.833** | **0.478** |
 
 ---
 
