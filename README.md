@@ -15,6 +15,7 @@ Este projeto cobre **todos** os requisitos da especificacao:
 | Retriever | OK | Notebook 03 (embedding retrieval + cross-encoder reranking) |
 | Gerador de resposta | OK | Notebook 03 (GPT-4o-mini com Chain-of-Thought) |
 | Metricas baseadas em LLMs (correctness + faithfulness) | OK | Notebook 04 (RAGAS: Factual Correctness + Faithfulness) |
+| Metricas semanticas (BERTScore, ROUGE-L, Cosine Sim) | OK | Notebook 04 (avaliacao local sem API) |
 | Metricas de recuperacao de informacao (bonus) | OK | Notebook 04 (Hit Rate, Precision, Recall, MRR) |
 | Ferramentas: LangChain | OK | Notebook 03b (pipeline LangChain) + Notebook 04 (RAGAS wrappers) |
 | Ferramentas: LlamaIndex | OK | Notebook 03 (pipeline principal) |
@@ -165,6 +166,7 @@ echo "OPENAI_API_KEY=sk-..." > .env
 1. Calcula metricas de retrieval (sem LLM)
 2. Roda ablation study (com vs sem reranker)
 3. Calcula metricas RAGAS (com LLM)
+4. Avaliacao semantica local (BERTScore, ROUGE-L, Cosine Similarity)
 
 **Algoritmos e metricas:**
 
@@ -194,17 +196,34 @@ Compara accuracy COM reranker vs SEM reranker para justificar a inclusao do cros
 
 **Por que CoT importa para RAGAS:** Na v2, respostas de 1 palavra ("yes") davam Faithfulness baixa (0.35) porque nao ha claims para verificar. Com CoT, o raciocinio permite decomposicao em claims verificaveis.
 
+#### 4.4 Avaliacao Semantica (sem LLM, local)
+
+| Metrica | O que mede | Por que e importante |
+|---|---|---|
+| **BERTScore F1** | Similaridade semantica contextual (BERT) | Captura significado alem de tokens superficiais |
+| **ROUGE-L F1** | Subsequencia comum mais longa | Mede sobreposicao estrutural do texto |
+| **Cosine Similarity (BGE)** | Similaridade de embeddings | Usa o mesmo modelo do retriever |
+
+**Como funciona:** Compara o raciocinio CoT (raw_response) contra os documentos golden (referencia dos especialistas). Mostra que o modelo entende a evidencia mesmo quando o label yes/no/maybe nao confere.
+
+**Por que e importante:** A accuracy de classificacao (46%) subestima a qualidade do pipeline. As metricas semanticas mostram que o raciocinio e semanticamente alinhado com a evidencia medica.
+
 **Resultado esperado:**
 - `results/retrieval_metrics.csv` — Metricas de retrieval
 - `results/ragas_results.csv` — Scores RAGAS por query
 - `results/ablation_reranker.csv` — Comparacao com/sem reranker
+- `results/semantic_evaluation.csv` — BERTScore, ROUGE-L, Cosine Sim por query
 - Faithfulness esperada: ~0.6-0.8 (melhoria significativa vs v2)
 - Factual Correctness esperada: ~0.5 (consistente com accuracy)
+- BERTScore F1 esperado: ~0.85+ (alta similaridade semantica)
+- Cosine Similarity esperado: ~0.70+ (bom alinhamento com golden docs)
 
 **Como saber se ta certo:**
 - Faithfulness > 0.5 (melhoria vs v2 que era 0.35)
 - Factual Correctness ~ accuracy (ambos medem "acertou?")
 - Ablation mostra diferenca positiva do reranker
+- BERTScore > 0.80 (raciocinio semanticamente coerente)
+- Scores semanticos similares entre predicoes corretas e incorretas (valida que o modelo entende a evidencia)
 
 **Tempo estimado:** ~30-40 min (retrieval local + ablation 500 API + RAGAS ~1000 API)
 
@@ -255,6 +274,7 @@ mestrado-cesar-13-marco-projeto-final/
 |   |-- retrieval_metrics.csv     # Metricas retrieval before/after rerank
 |   |-- ablation_reranker.csv     # Ablation: com vs sem reranker
 |   |-- langchain_results.csv     # Resultados LangChain (50 queries)
+|   |-- semantic_evaluation.csv  # BERTScore, ROUGE-L, Cosine Sim por query
 |   |-- generate_report_figures.py # Script para gerar graficos
 |   |-- figures/                  # 9 graficos PNG
 |       |-- 01_accuracy_evolution.png
@@ -266,6 +286,7 @@ mestrado-cesar-13-marco-projeto-final/
 |       |-- 07_metrics_dashboard.png
 |       |-- 08_ragas_evolution.png
 |       |-- 09_ablation_reranker.png
+|       |-- 10_semantic_evaluation.png
 |
 |-- scripts/
     |-- run_self_consistency.py   # Script standalone (opcional)

@@ -1,0 +1,3 @@
+configuration,accuracy
+With Reranker,0.462
+Without Reranker,0.508

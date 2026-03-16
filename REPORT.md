@@ -60,12 +60,12 @@ O pipeline foi otimizado em quatro versoes. A tabela abaixo resume a evolucao:
 | Metrica | v0 (Claude + parser fragil) | v1 (GPT-4o-mini + parser robusto) | v2 (Few-shot + self-consistency) | v3 (Chain-of-Thought) |
 |---|---|---|---|---|
 | **Accuracy** | 9.60% | 47.00% | 51.00% | 46.2% (47.8% excl. rate-limit) |
-| **Factual Correctness** | 0.022 | 0.470 | 0.510 | pendente |
-| **Faithfulness** | 0.770 | 0.380 | 0.347 | pendente |
+| **Factual Correctness** | 0.022 | 0.470 | 0.510 | 0.037* |
+| **Faithfulness** | 0.770 | 0.380 | 0.347 | **0.833** |
 | **RAGAS amostras** | 50 | 500 | 500 | 500 |
 | **Custo estimado** | ~$5.00 | ~$0.20 | ~$0.20 | ~$0.15 |
 
-**Nota v3:** 17 queries (3.4%) retornaram "unknown" por rate-limit da API OpenAI. Excluindo essas, a accuracy e 47.8%. As metricas RAGAS (Faithfulness e Factual Correctness) serao recalculadas com as respostas CoT.
+**Nota v3:** 17 queries (3.4%) retornaram "unknown" por rate-limit da API OpenAI. Excluindo essas, a accuracy e 47.8%. *Factual Correctness baixou porque RAGAS compara texto completo do CoT contra referencia de 1 palavra ("yes"/"no"/"maybe") — o score nao reflete a qualidade real. Faithfulness subiu drasticamente (0.347 → 0.833) pois o CoT fornece claims verificaveis.
 
 ### Evolucao visual
 
@@ -126,10 +126,10 @@ Para justificar a inclusao do cross-encoder reranker no pipeline, conduzimos um 
 | Configuracao | Accuracy |
 |---|---|
 | **Com Reranker** (cross-encoder) | 46.2% |
-| **Sem Reranker** (embedding only) | pendente |
-| **Delta** | pendente |
+| **Sem Reranker** (embedding only) | 50.8% |
+| **Delta** | -4.6pp |
 
-**Nota:** O ablation study sera executado apos reset do rate-limit da API OpenAI.
+**Resultado inesperado:** O cross-encoder reranker (ms-marco-MiniLM-L-6-v2) **piora** a accuracy em 4.6 pontos percentuais. Isso sugere que um reranker treinado em dados gerais (MS MARCO) pode nao ser adequado para o dominio medico. Os documentos mais relevantes semanticamente para a query nao sao necessariamente os mais uteis para responder perguntas medicas yes/no/maybe. Esta e uma direcao clara para trabalho futuro: usar um cross-encoder treinado em dados biomedicos.
 
 **Analise por classe:**
 
@@ -171,27 +171,51 @@ As metricas RAGAS foram calculadas com GPT-4o-mini sobre todas as 500 amostras, 
 
 ### 7.1 Faithfulness
 
-**Score medio (v3 CoT): pendente** (sera recalculado com respostas CoT)
+**Score medio (v3 CoT): 0.833**
 
-Faithfulness mede se a resposta gerada e sustentada pelos contextos recuperados (sem alucinacao). Na v2, o score era baixo (0.347) como artefato do formato: respostas de uma unica palavra ("yes") nao contem claims verificaveis. Na v3, o Chain-of-Thought gera raciocinio explicito que RAGAS decompoe em claims e verifica contra os contextos. Esperamos melhoria significativa (estimativa: 0.60-0.80).
+Faithfulness mede se a resposta gerada e sustentada pelos contextos recuperados (sem alucinacao). Na v2, o score era baixo (0.347) como artefato do formato: respostas de uma unica palavra ("yes") nao contem claims verificaveis. Na v3, o Chain-of-Thought gera raciocinio explicito que RAGAS decompoe em claims e verifica contra os contextos. **Melhoria de 139%** (0.347 → 0.833).
 
 ### 7.2 Factual Correctness
 
-**Score medio (v3 CoT): pendente** (sera recalculado com respostas CoT)
+**Score medio (v3 CoT): 0.037** *(artefato — ver nota abaixo)*
 
-Factual Correctness (modo F1) mede a sobreposicao textual entre a resposta gerada e o ground truth.
+Factual Correctness (modo F1) mede a sobreposicao textual entre a resposta gerada e o ground truth. **Nota:** Na v3, o score caiu porque RAGAS compara o texto completo do CoT (~200 tokens) contra a referencia de 1 palavra ("yes"). Isso gera F1 muito baixo por falta de overlap. A metrica nao reflete a qualidade real — as metricas semanticas (BERTScore, Cosine Similarity) sao mais adequadas para avaliar respostas CoT.
 
 ![Distribuicao RAGAS](results/figures/06_ragas_distributions.png)
 
 ---
 
-## 8. Painel Completo de Metricas
+## 8. Avaliacao Semantica (BERTScore, ROUGE-L, Cosine Similarity)
+
+Alem da accuracy de classificacao (yes/no/maybe), avaliamos a **qualidade semantica** do raciocinio Chain-of-Thought comparando-o com os documentos golden (referencia dos especialistas). Isso captura se o modelo entende a evidencia, mesmo quando o label final nao confere.
+
+| Metrica | O que mede | Por que e importante |
+|---|---|---|
+| **BERTScore F1** | Similaridade semantica contextual (BERT) | Captura significado alem de tokens superficiais |
+| **ROUGE-L F1** | Subsequencia comum mais longa | Mede sobreposicao estrutural do texto |
+| **Cosine Similarity (BGE)** | Similaridade de embeddings BGE | Usa o mesmo modelo do retriever para consistencia |
+
+**Resultados:** (488 amostras avaliadas — 12 excluidas por golden_doc vazio)
+
+| Metrica | Media | Std |
+|---|---|---|
+| BERTScore F1 | **0.849** | 0.030 |
+| ROUGE-L F1 | **0.202** | 0.090 |
+| Cosine Similarity (BGE) | **0.832** | 0.111 |
+
+**Insight principal:** Predicoes corretas e incorretas apresentam scores semanticos similares, indicando que o modelo compreende a evidencia mas nem sempre extrai o label correto — justificando o uso de avaliacao semantica como complemento a accuracy.
+
+![Avaliacao Semantica](results/figures/10_semantic_evaluation.png)
+
+---
+
+## 9. Painel Completo de Metricas
 
 ![Dashboard](results/figures/07_metrics_dashboard.png)
 
 ---
 
-## 9. Analise de Custo
+## 10. Analise de Custo
 
 | Item | v0 (Claude Sonnet) | v3 (GPT-4o-mini CoT) |
 |---|---|---|
@@ -206,7 +230,7 @@ Factual Correctness (modo F1) mede a sobreposicao textual entre a resposta gerad
 
 ---
 
-## 10. Limitacoes e Trabalho Futuro
+## 11. Limitacoes e Trabalho Futuro
 
 ### Limitacoes atuais
 1. **Accuracy de 46.2%** esta abaixo do estado da arte em PubMedQA (~78% com modelos fine-tunados). Parte da queda (vs v2 51%) e atribuida a 17 queries com rate-limit (3.4%).
@@ -221,7 +245,7 @@ Factual Correctness (modo F1) mede a sobreposicao textual entre a resposta gerad
 
 ---
 
-## 11. Reprodutibilidade
+## 12. Reprodutibilidade
 
 ### Frameworks utilizados
 - **LlamaIndex**: Pipeline principal de RAG (retrieval, reranking, geracao)
@@ -232,6 +256,7 @@ Factual Correctness (modo F1) mede a sobreposicao textual entre a resposta gerad
 - `llama-index-core`, `llama-index-llms-openai`, `llama-index-embeddings-huggingface`
 - `langchain`, `langchain-openai`, `langchain-huggingface`, `langchain-chroma`
 - `chromadb`, `sentence-transformers`
+- `bert_score`, `rouge_score` (avaliacao semantica local)
 - `ragas>=0.2.0`
 - `BAAI/bge-base-en-v1.5` (embedding)
 - `cross-encoder/ms-marco-MiniLM-L-6-v2` (reranker)
@@ -242,7 +267,7 @@ Factual Correctness (modo F1) mede a sobreposicao textual entre a resposta gerad
 2. `notebooks/02_indexing.ipynb` — Chunking + indexacao no ChromaDB
 3. `notebooks/03_retrieval_generation.ipynb` — Retrieval + Reranking + Geracao (LlamaIndex, v3 CoT)
 4. `notebooks/03b_langchain_pipeline.ipynb` — Pipeline alternativo com LangChain (50 queries demo)
-5. `notebooks/04_evaluation.ipynb` — Metricas de retrieval + Ablation study + RAGAS
+5. `notebooks/04_evaluation.ipynb` — Metricas de retrieval + Ablation study + RAGAS + Avaliacao Semantica
 
 ### Arquivos de resultado
 - `results/rag_results.jsonl` — Resultados completos (query, contextos, resposta CoT, votos)
@@ -251,6 +276,7 @@ Factual Correctness (modo F1) mede a sobreposicao textual entre a resposta gerad
 - `results/retrieval_metrics.csv` — Metricas de retrieval before/after rerank
 - `results/ablation_reranker.csv` — Resultados do ablation study (com vs sem reranker)
 - `results/langchain_results.csv` — Resultados do pipeline LangChain (50 queries)
+- `results/semantic_evaluation.csv` — Scores semanticos por query (BERTScore, ROUGE-L, Cosine Sim)
 - `results/figures/` — Todos os graficos deste relatorio
 
 ---

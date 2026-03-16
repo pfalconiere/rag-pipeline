@@ -341,4 +341,36 @@ else:
     print("Figure 9: SKIPPED (no ablation data)")
 
 
+# ============================================================
+# Figure 10: Semantic Evaluation
+# ============================================================
+semantic_path = RESULTS_DIR / "semantic_evaluation.csv"
+if semantic_path.exists():
+    df_sem = pd.read_csv(semantic_path)
+    fig, axes = plt.subplots(1, 3, figsize=(16, 5))
+
+    sem_metrics = [
+        ("bertscore_f1", "BERTScore F1", "#4C72B0"),
+        ("rougeL_f1", "ROUGE-L F1", "#DD8452"),
+        ("cosine_similarity", "Cosine Similarity (BGE)", "#55A868"),
+    ]
+
+    for ax, (col, title, color) in zip(axes, sem_metrics):
+        ax.hist(df_sem[col].dropna(), bins=25, color=color, edgecolor='white', alpha=0.85)
+        ax.axvline(df_sem[col].mean(), color='red', linestyle='--', linewidth=2,
+                   label=f'Media: {df_sem[col].mean():.3f}')
+        ax.set_xlabel('Score')
+        ax.set_ylabel('Contagem')
+        ax.set_title(title)
+        ax.legend(fontsize=11)
+
+    plt.suptitle('Avaliacao Semantica: CoT Reasoning vs Golden Documents', fontsize=14, y=1.02)
+    plt.tight_layout()
+    plt.savefig(FIGURES_DIR / "10_semantic_evaluation.png")
+    plt.close()
+    print("Figure 10: semantic evaluation")
+else:
+    print("Figure 10: SKIPPED (no semantic evaluation data)")
+
+
 print(f"\nAll figures saved to {FIGURES_DIR}/")
