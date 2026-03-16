@@ -213,8 +213,8 @@ Compara accuracy COM reranker vs SEM reranker para justificar a inclusao do cros
 - `results/ragas_results.csv` — Scores RAGAS por query
 - `results/ablation_reranker.csv` — Comparacao com/sem reranker
 - `results/semantic_evaluation.csv` — BERTScore, ROUGE-L, Cosine Sim por query
-- Faithfulness: 0.833 (melhoria significativa vs v2)
-- Factual Correctness corrigido: 0.478 (consistente com accuracy 47.4%)
+- Faithfulness: 0.859 (melhoria significativa vs v2)
+- Factual Correctness corrigido: 0.526 (consistente com accuracy 47.4%)
 - BERTScore F1 esperado: ~0.85+ (alta similaridade semantica)
 - Cosine Similarity esperado: ~0.70+ (bom alinhamento com golden docs)
 
@@ -301,7 +301,7 @@ mestrado-cesar-13-marco-projeto-final/
 | **v0** | Claude Sonnet + parser fragil | 9.6% | 0.770 | 0.022 |
 | **v1** | GPT-4o-mini + parser robusto | 47.0% | 0.380 | 0.470 |
 | **v2** | Few-shot + temp=0 | 51.0% | 0.347 | 0.510 |
-| **v3** | Chain-of-Thought + CoT reasoning | **47.4%** | **0.833** | **0.478** |
+| **v3** | Chain-of-Thought + CoT reasoning | **47.4%** | **0.859** | **0.526** |
 
 ---
 

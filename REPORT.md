@@ -60,9 +60,9 @@ O pipeline foi otimizado em quatro versoes. A tabela abaixo resume a evolucao:
 | Metrica | v0 (Claude + parser fragil) | v1 (GPT-4o-mini + parser robusto) | v2 (Few-shot + self-consistency) | v3 (Chain-of-Thought) |
 |---|---|---|---|---|
 | **Accuracy** | 9.60% | 47.00% | 51.00% | **47.4%** |
-| **Factual Correctness** | 0.022 | 0.470 | 0.510 | **0.478** (corrigido) |
-| **FC (CoT completo)** | — | — | — | 0.037 (artefato*) |
-| **Faithfulness** | 0.770 | 0.380 | 0.347 | **0.833** |
+| **Factual Correctness** | 0.022 | 0.470 | 0.510 | **0.526** (corrigido) |
+| **FC (CoT completo)** | — | — | — | 0.041 (artefato*) |
+| **Faithfulness** | 0.770 | 0.380 | 0.347 | **0.859** |
 | **RAGAS amostras** | 50 | 500 | 500 | 500 |
 | **Custo estimado** | ~$5.00 | ~$0.20 | ~$0.20 | ~$0.15 |
 
@@ -172,9 +172,9 @@ As metricas RAGAS foram calculadas com GPT-4o-mini sobre todas as 500 amostras, 
 
 ### 7.1 Faithfulness
 
-**Score medio (v3 CoT): 0.833**
+**Score medio (v3 CoT): 0.859**
 
-Faithfulness mede se a resposta gerada e sustentada pelos contextos recuperados (sem alucinacao). Na v2, o score era baixo (0.347) como artefato do formato: respostas de uma unica palavra ("yes") nao contem claims verificaveis. Na v3, o Chain-of-Thought gera raciocinio explicito que RAGAS decompoe em claims e verifica contra os contextos. **Melhoria de 139%** (0.347 → 0.833).
+Faithfulness mede se a resposta gerada e sustentada pelos contextos recuperados (sem alucinacao). Na v2, o score era baixo (0.347) como artefato do formato: respostas de uma unica palavra ("yes") nao contem claims verificaveis. Na v3, o Chain-of-Thought gera raciocinio explicito que RAGAS decompoe em claims e verifica contra os contextos. **Melhoria de 148%** (0.347 → 0.859).
 
 ### 7.2 Factual Correctness
 
@@ -184,8 +184,8 @@ Factual Correctness (modo F1) mede a sobreposicao textual entre a resposta gerad
 
 | Modo | FC Score | Explicacao |
 |---|---|---|
-| **CoT completo** | 0.037 | Artefato: compara ~200 tokens de raciocinio vs 1 palavra de referencia |
-| **Resposta extraida** | **0.478** | Compara apenas "yes"/"no"/"maybe" vs ground truth — alinhado com accuracy (47.4%) |
+| **CoT completo** | 0.041 | Artefato: compara ~200 tokens de raciocinio vs 1 palavra de referencia |
+| **Resposta extraida** | **0.526** | Compara apenas "yes"/"no"/"maybe" vs ground truth — alinhado com accuracy (47.4%) |
 
 O FC corrigido foi obtido re-executando o RAGAS FactualCorrectness usando apenas a resposta final extraida (yes/no/maybe) como campo `response`, em vez do raciocinio Chain-of-Thought completo. Isso alinha o formato da resposta com o formato do ground truth, produzindo um score significativo e consistente com a accuracy.
 
